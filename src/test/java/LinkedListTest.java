@@ -1,9 +1,7 @@
 import org.junit.Test;
 
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -14,7 +12,7 @@ public class LinkedListTest {
     public void initialSetup() {
         LinkedList<Integer> l = new LinkedList<Integer>();
 
-        assertTrue(0 == l.snapshot().size());
+        assertTrue(0 == l.snapshot().length);
     }
 
     @Test
@@ -31,15 +29,56 @@ public class LinkedListTest {
         };
         for (dataTable dt: table) {
             ll.insert(dt.elem, dummy);
-            System.out.println(dt.elem);
-            ArrayList<Integer> snap = ll.snapshot();
-            for (Integer i: snap) {
-                assertEquals(dt.elem, i.longValue());
-            }
+
+            long[] snap = ll.snapshot();
+            assertArrayEquals(dt.list, snap);
         }
 
     }
 
+    @Test
+    public void parallelInsert() throws java.lang.InterruptedException {
+        LinkedList<Integer> ll = new LinkedList<Integer>();
+        Integer dummy = new Integer(0);
+
+        dataTable[] table = new dataTable[]{
+                new dataTable(1, new long[]{1}),
+                new dataTable(2, new long[]{2, 1}),
+                new dataTable(30, new long[]{30, 2, 1}),
+                new dataTable(25, new long[]{30, 25, 2, 1}),
+                new dataTable(0, new long[]{30, 25, 2, 1, 0})
+        };
+
+        Thread[] ts = new Thread[table.length];
+        int i = 0;
+        for (dataTable dt: table) {
+            ts[i] = (new Thread(new InsertRunnable(ll, dt.elem)));
+            ts[i].start();
+            i++;
+        }
+
+        for (Thread t: ts) {
+            t.join();
+        }
+
+        assertArrayEquals(table[table.length-1].list, ll.snapshot());
+    }
+
+
+    public class InsertRunnable implements Runnable {
+        LinkedList ll;
+        long version;
+
+        public void run() {
+            Integer dummy = new Integer(0);
+            ll.insert(version, dummy);
+        }
+
+        public InsertRunnable(LinkedList ll, long version) {
+            this.ll = ll;
+            this.version = version;
+        }
+    }
 
 
     // Helpers. Jaba SUCKS.

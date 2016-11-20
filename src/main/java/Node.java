@@ -3,6 +3,7 @@ import java.util.concurrent.atomic.AtomicMarkableReference;
 /**
  * Created by goutham on 20/11/16.
  */
+
 public class Node<T> {
     AtomicMarkableReference<Node<T>> next;
     long version;

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
 /**
@@ -16,10 +15,10 @@ public class LinkedList<T> {
         AtomicMarkableReference<Node<T>> ch = head;
         Node<T> cr = ch.getReference();
         if (ch.getReference() == null || v > ch.getReference().version) {
-            Node<T> newNode = new Node<T>(ch.getReference(), 0, data);
+            Node<T> newNode = new Node<T>(ch.getReference(), v, data);
             if (!head.compareAndSet(cr, newNode, false, false)) {
                 return insert(v, data);
-            };
+            }
 
             return newNode;
         }
@@ -27,7 +26,6 @@ public class LinkedList<T> {
         AtomicMarkableReference<Node<T>> cursor = ch;
 
         while(true) {
-            System.out.println("fdksdf;lkdfj;kdf");
             AtomicMarkableReference<Node<T>> next = cursor.getReference().next;
             Node<T> nextNode = next.getReference();
             if (nextNode == null || v > nextNode.version) {
@@ -49,7 +47,7 @@ public class LinkedList<T> {
     }
 
 
-    public T getHeadDat() {
+    public T getHeadObj() {
         return head.getReference().object;
     }
 
@@ -68,18 +66,32 @@ public class LinkedList<T> {
         return cur.getReference().object;
     }
 
-    public ArrayList<T> snapshot() {
-        ArrayList<T> a = new ArrayList<T>();
+    // debugging only
+    public long[] snapshot() {
+        int length = 0;
+
 
         AtomicMarkableReference<Node<T>> cursor = head;
         while (cursor.getReference() != null) {
             if (!cursor.isMarked()) {
-                a.add(cursor.getReference().object);
+                length++;
             }
 
             cursor = cursor.getReference().next;
         }
 
-        return a;
+        long[] l = new long[length];
+        length = 0;
+        cursor = head;
+        while (cursor.getReference() != null) {
+            if (!cursor.isMarked()) {
+                l[length] = cursor.getReference().version;
+                length++;
+            }
+
+            cursor = cursor.getReference().next;
+        }
+
+        return l;
     }
 }
