@@ -10,6 +10,11 @@ public class KVStruct{
         value=0;
     }
 
+    public KVStruct(int key, int value) {
+        this.key = key;
+        this.value = value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
