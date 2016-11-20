@@ -66,6 +66,46 @@ public class LinkedList<T> {
         return cur.getReference().object;
     }
 
+    public void delete(long version) {
+        AtomicMarkableReference<Node<T>> prev = new AtomicMarkableReference<Node<T>>(null, false);
+        AtomicMarkableReference<Node<T>> ch = head;
+        AtomicMarkableReference<Node<T>> cursor = head;
+
+        while(true) {
+
+            if (cursor == null || cursor.getReference() == null)
+                break;
+
+            Node<T> currentObj = cursor.getReference();
+
+            if (cursor.getReference().version == version) {
+                if (!cursor.attemptMark(currentObj, true)) {
+                    delete(version);
+                    return;
+                }
+
+                boolean rt = false;
+                AtomicMarkableReference<Node<T>> next;
+                if (prev.getReference() != null) {
+                    rt = prev.getReference().next.compareAndSet(prev.getReference().next.getReference(), cursor.getReference().next.getReference(), true, false);
+                } else {
+                    // HEAD
+                    rt = ch.compareAndSet(ch.getReference(), cursor.getReference().next.getReference(), true, false);
+                }
+
+                if (!rt) {
+                    delete(version);
+                    return;
+                }
+
+                break;
+            }
+
+            prev = cursor;
+            cursor = cursor.getReference().next;
+        }
+    }
+
     // debugging only
     public long[] snapshot() {
         int length = 0;
