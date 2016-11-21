@@ -1,4 +1,4 @@
-/**
+package cuckoo; /**
  * Created by goutham on 20/11/16.
  */
 
@@ -83,6 +83,7 @@ public class Cuckoo<K, V> {
     }
 
     public void put(K key, V value) throws NeedExpansionException {
+        if(key == null || value == null) throw new NullPointerException();
         try{
             lock.lock();
             long txn = txnCtr.getAndIncrement();
@@ -170,8 +171,8 @@ public class Cuckoo<K, V> {
     }
 
 //    private void growAndRehash() {
-//        Cuckoo<K, V> newC = new Cuckoo<K, V>(2*size, maxReach, txnCtr.get(), lsTxn.get());
-//        for (LinkedList<KVStruct<K, V>> ll: values) {
+//        cuckoo.Cuckoo<K, V> newC = new cuckoo.Cuckoo<K, V>(2*size, maxReach, txnCtr.get(), lsTxn.get());
+//        for (cuckoo.LinkedList<KVStruct<K, V>> ll: values) {
 //            newC.put(ll.getHeadObj().getKey(), ll.getHeadObj().getValue());
 //        }
 //

@@ -1,3 +1,4 @@
+import cuckoo.LinkedList;
 import org.junit.Test;
 
 
@@ -124,8 +125,8 @@ public class LinkedListTest {
         long version;
 
         public void run() {
-            Integer dummy = new Integer(0);
             ll.delete(version);
+            Integer dummy = new Integer(0);
         }
 
         public DeleteRunnable(LinkedList ll, long version) {

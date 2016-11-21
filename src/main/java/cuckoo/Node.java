@@ -1,3 +1,5 @@
+package cuckoo;
+
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
 /**

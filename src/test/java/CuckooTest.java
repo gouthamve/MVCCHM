@@ -1,3 +1,5 @@
+import cuckoo.Cuckoo;
+import cuckoo.NeedExpansionException;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -27,6 +29,8 @@ public class CuckooTest {
 
             tm.put(new Integer(kv.key), new Integer(kv.value));
         }
+
+        System.out.println(tm.size());
 
         for (HashMap.Entry<Integer, Integer> e: tm.entrySet()) {
             assertEquals(e.getValue().intValue(), c.get(e.getKey().intValue()));
