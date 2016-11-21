@@ -102,6 +102,13 @@ public class GenerateNumbers {
     // The time taken by w threads to finish 15K writes while r threads are reading.
     @Test
     public void timeParallel() {
+        runBenchMark(1, 999);
+        runBenchMark(10, 990);
+        runBenchMark(50, 950);
+        runBenchMark(100, 900);
+        runBenchMark(200, 800);
+        runBenchMark(300, 700);
+        runBenchMark(400, 600);
         runBenchMark(500, 500);
         runBenchMark(600, 400);
         runBenchMark(700, 300);
